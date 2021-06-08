@@ -1,4 +1,5 @@
-/*
+/********
+数据类型
 面向对象
 原型/原型链
 new
@@ -9,13 +10,16 @@ call，apply，bind
 作用域
 高阶函数（柯里化）
 闭包
-数据类型（基础/引用，==，判断类型（全部是基本类型（同类型直接比较，不同类型转为number）；含有基本类型（引用类型.valueOf()?.toString()）；不含基本类型都不==（引用指向不同的地址）））
+********/
+// 原型/原型链
+/*
 */
 
 // 数据类型
 /*
 基础类型undefined，null，boolean，string，number，symbol（用来表示唯一值）
-引用类型Object，Array，function
+引用类型object，array，function
+
 类型比较
 1. 基本类型==基本类型
 1.1 同类型直接比较
@@ -30,22 +34,42 @@ call，apply，bind
 2.4 Date对象，先比较toString并返回
 3. 引用类型==引用类型
 3.1 引用比较引用地址（{}=={}//false let a = b = {};a==b;//true）
-类型转换
+
+类型转换：原理同上
+
+类型检测
+1. typeof
+判断数据类型，不能区分object和array
+2. instanceof
+判断一个构造函数的prototype属性所指向的对象是否存在另外一个要检测对象的原型链上
+2.1 function Foo(){};let foo = new Foo();foo.__proto__===Foo.prototype;foo.__proto__.constructor===Foo
+2.2 Object.getPrototypeOf() 
+2.2.1 Object.getPrototypeOf({a:1})===Object.getPrototypeOf({})===({}).__proto__===Object.prototype
+2.2.2 let obj = {};let otherObj = Object.create(obj);Object.getPrototypeOf(otherObj)===obj
+3. Object.prototype.toString.call
 */
-let valueOf = Object.prototype.valueOf
-let toString = Object.prototype.toString
-Object.prototype.valueOf = function(){
-    console.log('valueOf')
-    return valueOf.call(this)
+const data_type = function () {
+    let valueOf = Object.prototype.valueOf
+    let toString = Object.prototype.toString
+    Object.prototype.valueOf = function(){
+        console.log('valueOf')
+        return valueOf.call(this)
+    }
+    Object.prototype.toString = function(){
+        console.log('toString') // toString打印不出来，说明不能重写
+        return toString.call(this)
+    }
+    function Foo () {}
+    Foo.prototype.toString = function () {
+        console.log('toString Foo')
+    }
+    let foo = new Foo()
+    console.log(foo==1) // 曲线救国：先打印valueOf后打印toString Foo，最后打印返回 false
+    console.log(!new Date()==1) // 只打印false，说明只执行toString并返回
 }
-Object.prototype.toString = function(){
-    console.log('toString') // toString打印不出来，说明不能重写
-    return toString.call(this)
-}
-function Foo () {}
-Foo.prototype.toString = function () {
-    console.log('toString Foo')
-}
-let foo = new Foo()
-console.log(foo==1) // 曲线救国：先打印valueOf后打印toString Foo，最后打印返回 false
-console.log(!new Date()==1) // 只打印false，说明只执行toString并返回
+// data_type()
+
+// 面向对象
+/*
+
+*/
