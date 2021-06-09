@@ -28,7 +28,6 @@ call，apply，bind
 5. 词法作用域： 编程时的上下文（Write-Time），词法作用域关注的是函数在何处被定义，js闭包特性的重要保证
 5.1 动态作用域：运行时上下文（Run-Time），关注的是函数在何处被调用
 5.2 案例解释
-
 */
 function scope () {
     var fns = []
@@ -68,7 +67,7 @@ function lexicalScope(){
     var a = 2;
     bar();
 }
-lexicalScope()
+// lexicalScope()
 
 // 变量声明
 /*
