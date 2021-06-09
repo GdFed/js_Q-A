@@ -31,30 +31,30 @@ call，apply，bind
 
 */
 function scope () {
-    // var fns = []
-    // // 函数作用域缺陷（异常的变量传递）（导致原因：函数作用域内变量i为全局变量）
-    // for(var i=0;i<5;i++){
-    //     fns[i] = function(){
-    //         console.log(i)
-    //     }
-    // }
-    // fns.forEach(fn=>fn()) // 5 5 5 5 5
-    // // es6之前，实现块级作用域(自执行函数)，可以将全局变量j作为形参变量传递给函数作用域内使用
-    // for(var j=0;j<5;j++){
-    //     (function(j){
-    //         fns[j] = function(){
-    //             console.log(j)
-    //         }
-    //     })(j)
-    // }
-    // fns.forEach(fn=>fn()) // 0 1 2 3 4
-    // // es6之后，for代码块产生块级作用域，let申明的变量k在块级作用域内使用
-    // for(let k=0;k<5;k++){
-    //     fns[k] = function(){
-    //         console.log(k)
-    //     }
-    // }
-    // fns.forEach(fn=>fn()) // 0 1 2 3 4
+    var fns = []
+    // 函数作用域缺陷（异常的变量传递）（导致原因：函数作用域内变量i为全局变量）
+    for(var i=0;i<5;i++){
+        fns[i] = function(){
+            console.log(i)
+        }
+    }
+    fns.forEach(fn=>fn()) // 5 5 5 5 5
+    // es6之前，实现块级作用域(自执行函数)，可以将全局变量j作为形参变量传递给函数作用域内使用
+    for(var j=0;j<5;j++){
+        (function(j){
+            fns[j] = function(){
+                console.log(j)
+            }
+        })(j)
+    }
+    fns.forEach(fn=>fn()) // 0 1 2 3 4
+    // es6之后，for代码块产生块级作用域，let申明的变量k在块级作用域内使用
+    for(let k=0;k<5;k++){
+        fns[k] = function(){
+            console.log(k)
+        }
+    }
+    fns.forEach(fn=>fn()) // 0 1 2 3 4
 }
 // scope()
 function lexicalScope(){
