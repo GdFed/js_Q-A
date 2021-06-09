@@ -3,7 +3,7 @@
 事件流（捕获/冒泡/事件代理/事件委托）
 html5新标签及新特性
 兼容性
-ajax
+ajax(axios)
 跨域（jsonp，postmessage，ajax）
 w3c新api
 svg/canvas/webGL
@@ -154,7 +154,6 @@ CDN
 CORS
 安全
 5层网络结构（应用层（应用层表示层会话层）（http），传输层（tcp，udp），网络层（ip），数据链路层，物理层）
-axios
 websocket
 */
 
