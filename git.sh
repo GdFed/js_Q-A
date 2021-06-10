@@ -6,7 +6,7 @@ node ./index.js
 fi
 
 git add .
-if [ -n "$2" ]
+if [[ -n "$2" ]]
 then
 echo "custom commit: "$2
 git commit -m "$2"
