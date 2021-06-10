@@ -7,7 +7,7 @@ fi
 
 git add .
 
-if [ -n "$2" ]
+if [ -n "$1" && -n "$2" ]
 then
 echo "custom commit: "$2
 git commit -m "$2"
