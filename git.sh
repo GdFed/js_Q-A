@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ $1 = "1" ]
+if [ -n "$1" && $1 = "1" ]
 then
 echo "edit readme: "$1 
 node ./index.js
