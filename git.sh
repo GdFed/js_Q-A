@@ -6,7 +6,10 @@ node ./index.js
 fi
 
 git add .
-
+echo $2
+echo "$2"
+echo "-n $2"
+echo -n "$2"
 if [ -n "$2" ]
 then
 echo "custom commit: "$2
