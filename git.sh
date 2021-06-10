@@ -4,7 +4,7 @@ echo 'edit readme'
 node ./index.js
 fi
 
-git add ./
+git add .
 if [ -n $2 ]; then
 echo 'custom commit'
 git commit -m "$2"
