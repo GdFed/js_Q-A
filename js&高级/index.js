@@ -1,10 +1,10 @@
 /********
-数据类型
-面向对象
-作用域
-变量申明
-变量提升
-原型/原型链
+ 面向对象
+ 作用域
+ 变量申明
+ 变量提升
+ 原型/原型链
+ 数据类型
 new
 构造函数（persom.__proto__===Person.prototype(__proto__不是w2c标准，但是浏览器基本上都提供)）
 继承（原型继承，构造函数继承，组合继承）
@@ -16,7 +16,7 @@ call，apply，bind
 
 // 作用域
 /*
-作用域：代码执行过程中的(变量、函数或者对象的)可访问区域
+作用域：代码区块中(变量、函数或者对象的)可访问区域
 1. ES6之前：js存在全局作用域(函数之外)和函数作用域（函数以内）
 1.1 函数作用域的缺陷：粒度过大，在使用闭包或者其他特性时导致异常的变量传递
 2. ES6之后：新增块级作用域
@@ -119,6 +119,7 @@ function hoisting () {
 2.2 valueOf 返回它相应的原始值
 2.3 toString 返回一个反映这个对象的字符串
 2.4 Date对象，先比较toString并返回
+2.5 案例解释
 3. 引用类型==引用类型
 3.1 引用比较引用地址（{}=={}//false let a = b = {};a==b;//true）
 
@@ -127,13 +128,14 @@ function hoisting () {
 类型检测
 1. typeof
 判断数据类型，不能区分object和array
-2. instanceof
+2. instanceof 检测对象，右侧参数必须可调用（构造函数）
 判断一个构造函数的prototype属性所指向的对象是否存在另外一个要检测对象的原型链上
 2.1 function Foo(){};let foo = new Foo();foo.__proto__===Foo.prototype;foo.__proto__.constructor===Foo
-2.2 Object.getPrototypeOf() 
+2.2 Object.getPrototypeOf(object) 返回指定对象的原型（内部[[Prototype]]属性的值）
 2.2.1 Object.getPrototypeOf({a:1})===Object.getPrototypeOf({})===({}).__proto__===Object.prototype
-2.2.2 let obj = {};let otherObj = Object.create(obj);Object.getPrototypeOf(otherObj)===obj
-3. Object.prototype.toString.call
+2.3 Object.create(proto，[propertiesObject]) 创建一个新对象，使用现有的对象来提供新创建的对象的__proto__
+2.3.1 let obj = {};let otherObj = Object.create(obj);Object.getPrototypeOf(otherObj)===obj
+3. Object.prototype.toString.call 返回一个表示该对象的字符串
 */
 function dataType () {
     let valueOf = Object.prototype.valueOf
@@ -155,6 +157,24 @@ function dataType () {
     console.log(!new Date()==1) // 只打印false，说明只执行toString并返回
 }
 // dataType()
+function detecteTypeOf(val){
+    return typeof val
+}
+// console.log(detecteTypeOf('1')) // string
+// console.log(detecteTypeOf(String(1))) // string
+// console.log(detecteTypeOf(new String(1))) // object
+function detecteInstanceOf(obj, origin){
+    return obj instanceof origin
+    // return Object.getPrototypeOf(obj) === origin.prototype
+    // return obj.__proto__ === origin.prototype
+}
+function Foo(){};let foo = new Foo();
+// console.log(detecteInstanceOf(foo, Foo)) // 右侧必须是可调函数
+// console.log(detecteInstanceOf(foo, {a:1})) // Right-hand side of 'instanceof' is not callable “instanceof”的右侧不可调用
+function toStringCall (val) {
+    return Object.prototype.toString.call(val)
+}
+console.log(toStringCall(1))
 
 // 面向对象
 /*
