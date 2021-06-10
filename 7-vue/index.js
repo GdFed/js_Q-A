@@ -1,0 +1,14 @@
+/********
+vue2.0/vue3.0
+生命周期
+diff
+虚拟dom（snabbdom）
+render函数
+数据双向绑定
+v-modal
+v-if/v-for
+slot
+组件通信
+nuxt
+指令（v-directive）
+********/

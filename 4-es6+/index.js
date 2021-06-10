@@ -1,0 +1,11 @@
+/********
+箭头函数
+let,const,var(变量提升)
+迭代器、生成器
+promise，async/await（异步：回调，事件监听（发布订阅））
+Proxy/Reflect
+Set/Map
+.../解构/``
+Class
+Array/Object新增方法
+********/
