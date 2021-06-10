@@ -1,4 +1,4 @@
-// dom/bom
+// 1-dom/bom
 /*
 事件流（捕获/冒泡/事件代理/事件委托）
 html5新标签及新特性
@@ -9,7 +9,7 @@ w3c新api
 svg/canvas/webGL
 */
 
-// css
+// 2-css
 /*
 visibility:hidden/display:none/opacity:0
 盒子模型
@@ -24,7 +24,7 @@ less/sass
 重绘/回流
 */
 
-// js&高级
+// 3-js&高级
 /*
 面向对象
 原型/原型链
@@ -40,7 +40,7 @@ call，apply，bind
 正则表达式（test，match）
 */
 
-// es6+
+// 4-es6+
 /*
 箭头函数
 let,const,var(变量提升)
@@ -53,7 +53,7 @@ Class
 Array/Object新增方法
 */
 
-// node
+// 5-node
 /*
 event loop
 模块
@@ -62,7 +62,7 @@ egg（koa，express）
 puppeteer
 */
 
-// 浏览器
+// 6-浏览器
 /*
 event loop
 url输入回车
@@ -71,7 +71,7 @@ v8
 垃圾回收机制（引用计数，标记清除，标记整理，分代回收）
 */
 
-// vue
+// 7-vue
 /*
 vue2.0/vue3.0
 生命周期
@@ -84,9 +84,10 @@ v-if/v-for
 slot
 组件通信
 nuxt
+指令（v-directive）
 */
 
-// vue-router
+// 8-vue-router
 /*
 vue-router源码分析
 原理（hashchange、pushstate/replacestate/popstate）
@@ -95,7 +96,7 @@ $router/$route
 按需加载路由
 */
 
-// vuex/mobx/flux/redux
+// 9-vuex&mobx&flux&redux
 /*
 vuex源码分析
 状态管理机制（mobx，flux，redux）
