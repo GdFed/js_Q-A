@@ -74,11 +74,13 @@ v8
 
 // 7-vue
 /********
+MVVM/MVC
 vue2.0/vue3.0
 生命周期
 diff
 虚拟dom（snabbdom）
 render函数
+响应式
 数据双向绑定
 v-modal
 v-if/v-for
@@ -121,14 +123,23 @@ tsc/ts-node
 
 // 12-webpack
 /********
+简述
 编译过程
+编译生命周期钩子
+hooks设计原理：tapable
 loader
-plugin
-ast
 常见loader
+plugin
 常见plugin
+loader与plugin区别
+ast
 vue-cli
-webpack编译优化
+webpack的热更新是如何做到的
+如何利用webpack来优化前端性能
+如何提高webpack的构建速度
+怎么配置单页应用？怎么配置多页应用？
+hash、chunkhash、contenthash三者的区别？
+webpack与grunt、gulp的不同？
 ********/
 
 // 13-工程化
@@ -180,6 +191,7 @@ jsBridge
 
 // 17-解决方案
 /********
+tapable
 国际化
 大文件(断点)上传
 element二次封装
