@@ -34,7 +34,7 @@ webpack与grunt、gulp的不同？
 3. 输出：将编译后的module组合成chunk，将chunk转换成文件，根据output路径输出到文件系统中
 */
 
-// 编译生命周期钩子
+// 生命周期钩子
 /*
 hooks设计原理：tapable（https://github.com/webpack/tapable#tapable）
 const {
@@ -44,7 +44,9 @@ const {
 	AsyncSeriesHook
 } = require("tapable");
 
-主要的钩子：https://webpack.docschina.org/api/compiler-hooks/
+compiler钩子：https://webpack.docschina.org/api/compiler-hooks/
+compilation钩子：https://webpack.docschina.org/api/compilation-hooks/
+主要的钩子：
 entry-option：初始化 option。
 run: 执行。
 compile：真正开始的编译，在创建 compilation 对象之前。
@@ -58,76 +60,22 @@ failed：编译失败的时候。
 
 this.hooks = Object.freeze({
 			initialize: new SyncHook([]),
-			// @type {SyncBailHook<[Compilation], boolean>}
 			shouldEmit: new SyncBailHook(["compilation"]),
-			// @type {AsyncSeriesHook<[Stats]>}
 			done: new AsyncSeriesHook(["stats"]),
-			// @type {SyncHook<[Stats]>}
-			afterDone: new SyncHook(["stats"]),
-			// @type {AsyncSeriesHook<[]>}
-			additionalPass: new AsyncSeriesHook([]),
-			// @type {AsyncSeriesHook<[Compiler]>}
-			beforeRun: new AsyncSeriesHook(["compiler"]),
-			// @type {AsyncSeriesHook<[Compiler]>}
-			run: new AsyncSeriesHook(["compiler"]),
-			// @type {AsyncSeriesHook<[Compilation]>}
-			emit: new AsyncSeriesHook(["compilation"]),
-			// @type {AsyncSeriesHook<[string, AssetEmittedInfo]>}
-			assetEmitted: new AsyncSeriesHook(["file", "info"]),
-			// @type {AsyncSeriesHook<[Compilation]>}
-			afterEmit: new AsyncSeriesHook(["compilation"]),
-
-			// @type {SyncHook<[Compilation, CompilationParams]>}
-			thisCompilation: new SyncHook(["compilation", "params"]),
-			// @type {SyncHook<[Compilation, CompilationParams]>}
-			compilation: new SyncHook(["compilation", "params"]),
-			// @type {SyncHook<[NormalModuleFactory]>}
-			normalModuleFactory: new SyncHook(["normalModuleFactory"]),
-			// @type {SyncHook<[ContextModuleFactory]>} 
-			contextModuleFactory: new SyncHook(["contextModuleFactory"]),
-
-			// @type {AsyncSeriesHook<[CompilationParams]>}
-			beforeCompile: new AsyncSeriesHook(["params"]),
-			// @type {SyncHook<[CompilationParams]>}
-			compile: new SyncHook(["params"]),
-			// @type {AsyncParallelHook<[Compilation]>}
-			make: new AsyncParallelHook(["compilation"]),
-			// @type {AsyncParallelHook<[Compilation]>}
-			finishMake: new AsyncSeriesHook(["compilation"]),
-			// @type {AsyncSeriesHook<[Compilation]>}
-			afterCompile: new AsyncSeriesHook(["compilation"]),
-
-			// @type {AsyncSeriesHook<[Compiler]>}
-			watchRun: new AsyncSeriesHook(["compiler"]),
-			// @type {SyncHook<[Error]>}
-			failed: new SyncHook(["error"]),
-			// @type {SyncHook<[string | null, number]>}
-			invalid: new SyncHook(["filename", "changeTime"]),
-			// @type {SyncHook<[]>}
-			watchClose: new SyncHook([]),
-			// @type {AsyncSeriesHook<[]>}
-			shutdown: new AsyncSeriesHook([]),
-
-			// @type {SyncBailHook<[string, string, any[]], true>}
-			infrastructureLog: new SyncBailHook(["origin", "type", "args"]),
-
-			// TODO the following hooks are weirdly located here
-			// TODO move them for webpack 5
-			// @type {SyncHook<[]>}
-			environment: new SyncHook([]),
-			// @type {SyncHook<[]>}
-			afterEnvironment: new SyncHook([]),
-			// @type {SyncHook<[Compiler]>}
-			afterPlugins: new SyncHook(["compiler"]),
-			// @type {SyncHook<[Compiler]>}
-			afterResolvers: new SyncHook(["compiler"]),
-			// @type {SyncBailHook<[string, Entry], boolean>}
-			entryOption: new SyncBailHook(["context", "entry"])
+            ...
 		});
 
 创建两个核心对象:
 - compiler：包含了 webpack 环境的所有的配置信息，包括 options，loader 和 plugin，和 webpack 整个生命周期相关的钩子
+compiler 模块是 webpack 的主要引擎，它通过 CLI 传递的所有选项， 或者 Node API，创建出一个 compilation 实例
+用来注册和调用插件
+compiler 支持可以监控文件系统的 监听(watching) 机制，并且在文件修改时重新编译
+当处于监听模式(watch mode)时， compiler 会触发诸如 watchRun, watchClose 和 invalid 等额外的事件
 - compilation：作为 plugin 内置事件回调函数的参数，包含了当前的模块资源、编译生成资源、变化的文件以及被跟踪依赖的状态信息。当检测到一个文件变化，一次新的 Compilation 将被创建。
+compilation 模块会被 compiler 用来创建新的 compilation 对象（或新的 build 对象）
+compilation 实例能够访问所有的模块和它们的依赖（大部分是循环依赖）
+它会对应用程序的依赖图中所有模块， 进行字面上的编译(literal compilation)
+在编译阶段，模块会被加载(load)、封存(seal)、优化(optimize)、 分块(chunk)、哈希(hash)和重新创建(restore)
 */
 
 // hooks设计原理：tapable
@@ -155,61 +103,66 @@ this.hooks = Object.freeze({
 - AsyncSeriesWaterfallHook：与 SyncWaterfallHook 类似，上一个注册的异步回调执行之后的返回值会传递给下一个注册的回调。
 */
 const {SyncHook, AsyncParallelHook, AsyncSeriesHook} = require('tapable');
+// (function () {
+//     const hook = new SyncHook(['name', 'age'])
+//     hook.tap('hello', (name, age)=>{
+//         console.log(`hello ${name}${age}`)
+//     })
+//     hook.tap('hello', (name)=>{
+//         console.log(`hello again ${name}`)
+//     })
+//     hook.tap('hello again', (name, age)=>{
+//         console.log(`hello again ${name}${age}`)
+//     })
+//     hook.call('xzl', 18) // hello xzl   hello again xzl
+// })();
 (function () {
-    const hook = new SyncHook(['name'])
-    hook.tap('hello', (name)=>{
-        console.log(`hello ${name}`)
-    })
-    hook.tap('hello again', (name)=>{
-        console.log(`hello again ${name}`)
-    })
-    hook.call('xzl') // hello xzl   hello again xzl
-})();
-(function () {
-    const hook = new AsyncParallelHook(['name'])
+    const hook = new AsyncParallelHook(['name']) // 异步并行
     console.time('cost');
-    hook.tapAsync('hello', (name, cb)=>{
-        setTimeout(()=>{
-            console.log(`hello ${name}`)
-            cb()
-        }, 2000)
-    })
+    // hook.tapAsync('hello', (name, cb)=>{
+    //     setTimeout(()=>{
+    //         console.log(`hello ${name}`)
+    //         cb()
+    //     }, 1000)
+    // })
     hook.tapPromise('hello again', (name)=>{
         return new Promise((resolve)=>{
-            console.log(`hello again ${name}`)
-            resolve()
-        }, 1000)
+            setTimeout(()=>{
+                console.log(`hello again ${name}`)
+                resolve()
+            }, 2000)
+        })
     })
     hook.callAsync('xzl', ()=>{
         console.log('done')
         console.timeEnd('cost');
     }) // hello again xzl   hello xzl   done   cost: 2005.700ms
     // 或者通过hook.promise()调用
-    // hook.promise('xzl').then(()=>{
+    // hook.promise('xzl111').then(()=>{
     //     console.log('done')
     //     console.timeEnd('cost');
     // })
 })();
-(function () {
-    const hook = new AsyncSeriesHook(['name'])
-    console.time('cost');
-    hook.tapAsync('hello', (name, cb)=>{
-        setTimeout(()=>{
-            console.log(`hello ${name}`)
-            cb()
-        }, 2000)
-    })
-    hook.tapPromise('hello again', (name)=>{
-        return new Promise((resolve)=>{
-            console.log(`hello again ${name}`)
-            resolve()
-        }, 1000)
-    })
-    hook.callAsync('xzl', ()=>{
-        console.log('done')
-        console.timeEnd('cost');
-    }) // hello xzl   hello again xzl   done   cost: 2018.008ms
-})();
+// (function () {
+//     const hook = new AsyncSeriesHook(['name']) // 异步串行
+//     console.time('cost');
+//     hook.tapAsync('hello', (name, cb)=>{
+//         setTimeout(()=>{
+//             console.log(`hello ${name}`)
+//             cb()
+//         }, 2000)
+//     })
+//     hook.tapPromise('hello again', (name)=>{
+//         return new Promise((resolve)=>{
+//             console.log(`hello again ${name}`)
+//             resolve()
+//         })
+//     })
+//     hook.callAsync('xzl', ()=>{
+//         console.log('done')
+//         console.timeEnd('cost');
+//     }) // hello xzl   hello again xzl   done   cost: 2018.008ms
+// })();
 
 
 // loader
