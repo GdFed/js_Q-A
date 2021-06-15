@@ -1,4 +1,5 @@
 /********
+tapable
 国际化
 大文件(断点)上传
 element二次封装
@@ -12,3 +13,10 @@ devtools
 低代码平台开发
 性能监控平台开发
 ********/
+
+// tapable
+/*
+具体概念在12-webpack，这里主要自己实现tapable
+- https://blog.csdn.net/weixin_42260975/article/details/100730133
+- https://blog.csdn.net/weixin_42260975/article/details/100773593
+*/
