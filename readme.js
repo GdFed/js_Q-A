@@ -22,6 +22,7 @@ less/sass
 居中布局
 响应式布局
 重绘/回流
+面经
 ********/
 
 // 3-js&高级
@@ -39,6 +40,7 @@ this
 call，apply，bind
 高阶函数（柯里化）
 闭包
+面经
 ********/
 
 // 4-es6+
@@ -61,6 +63,7 @@ event loop
 egg（koa，express）
 持久化（redis）
 puppeteer
+面经
 ********/
 
 // 6-浏览器
@@ -70,6 +73,7 @@ url输入回车
 渲染机制
 v8
 垃圾回收机制（引用计数，标记清除，标记整理，分代回收）
+面经
 ********/
 
 // 7-vue
@@ -88,6 +92,7 @@ slot
 组件通信
 nuxt
 指令（v-directive）
+面经
 ********/
 
 // 8-vue-router
@@ -112,6 +117,7 @@ redux
 diff
 jsx
 fiber
+面经
 ********/
 
 // 11-typescript
@@ -132,14 +138,10 @@ loader
 plugin
 常见plugin
 loader与plugin区别
+webpack-dev-middleware
 ast
 vue-cli
-webpack的热更新是如何做到的
-如何利用webpack来优化前端性能
-如何提高webpack的构建速度
-怎么配置单页应用？怎么配置多页应用？
-hash、chunkhash、contenthash三者的区别？
-webpack与grunt、gulp的不同？
+面经
 ********/
 
 // 13-工程化
@@ -168,6 +170,7 @@ CORS
 安全（中间人攻击：伪造证书）
 5层网络结构（应用层（应用层表示层会话层）（http），传输层（tcp，udp），网络层（ip），数据链路层，物理层）
 websocket
+面经
 ********/
 
 // 15-安全
@@ -187,6 +190,7 @@ jsBridge
 通信
 编译
 渲染
+面经
 ********/
 
 // 17-解决方案
@@ -204,6 +208,7 @@ devtools
 小程序组件开发
 低代码平台开发
 性能监控平台开发
+面经
 ********/
 
 // 18-数据结构和算法
@@ -212,5 +217,6 @@ devtools
 堆栈
 队列
 链表
+面经
 ********/
 

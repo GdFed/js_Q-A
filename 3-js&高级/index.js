@@ -12,6 +12,7 @@ this
 call，apply，bind
 高阶函数（柯里化）
 闭包
+面经
 ********/
 
 // 作用域
@@ -179,4 +180,11 @@ console.log(toStringCall(1))
 // 面向对象
 /*
 
+*/
+
+// 面经
+/*
+typeif null?null instanceof Object?
+typeof可以判断哪些类型？instanceof做了什么？
+实现一个bind函数
 */

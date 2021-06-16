@@ -142,22 +142,50 @@ class AsyncParallelHook extends Hook {
     }
     callAsync(...args){
         let finalCallback = args.pop()
+        args = args.slice(0, this.args.length)
+        let index = 0
+        let that = this
+        let done = function(...arg){
+            index++
+            if(index==that.asyncTasks.length || arg.length){
+                finalCallback && finalCallback(...arg)
+            }
+        }
+        this.asyncTasks.forEach(task=>{
+            task(...args, done)
+        })
     }
-    promise(...args)
+    promise(...args){
+        return new Promise((resolve,reject)=>{
+            args = args.slice(0, this.args.length)
+            let index = 0
+            let that = this
+            let done = function(...arg){
+                index++
+                if(index==that.asyncTasks.length || arg.length){
+                    resolve(...arg)
+                }
+            }
+            this.asyncTasks.forEach(task=>{
+                task(...args, done)
+            })
+        })
+    }
 }
 let asyncParallelHook = new AsyncParallelHook(['name', 'age'])
-let i = 1
-asyncParallelHook.tapAsync('hello', (name, age)=>{
-    console.log(`hello ${name} ${age}`)
-    i++
-    return i <= 3 ? true : undefined
-})
-asyncParallelHook.tapAsync('hello', name=>{
+asyncParallelHook.tapAsync('hello', (name, cb)=>{
     console.log(`hello 11 ${name}`)
+    cb(1)
 })
-asyncParallelHook.tapAsync('hello again', name=>{
+asyncParallelHook.tapAsync('hello again', (name, cb)=>{
     console.log(`hello again ${name}`)
+    // cb(2)
 })
-asyncParallelHook.callAsync('xzl', 18, res=>{
+asyncParallelHook.callAsync('xzl', res=>{
+    console.log(res)
     console.log('end')
 })
+// asyncParallelHook.promise('xzl').then(res=>{
+//     console.log(res)
+//     console.log('end')
+// })
