@@ -322,9 +322,12 @@ gulp更像后端开发者的思路，需要对于整个流程了如指掌 webpac
 如何利用webpack来优化前端性能？
 【
 用webpack优化前端性能是指优化webpack的输出结果，让打包的最终结果在浏览器运行快速高效：
-- 压缩代码。删除多余的代码、注释、简化代码的写法等等方式。可以利用webpack的UglifyJsPlugin和ParallelUglifyPlugin来压缩JS文件， 利用cssnano（css-loader?minimize）来压缩css
-- 利用CDN加速。在构建过程中，将引用的静态资源路径修改为CDN上对应的路径。可以利用webpack对于output参数和各loader的publicPath参数来修改资源路径
-- 删除死代码（Tree Shaking）。将代码中永远不会走到的片段删除掉。可以通过在启动webpack时追加参数--optimize-minimize来实现
+- 压缩代码。删除多余的代码、注释、简化代码的写法等等方式。
+  可以利用webpack的UglifyJsPlugin和ParallelUglifyPlugin来压缩JS文件， 利用cssnano（css-loader?minimize）来压缩css
+- 利用CDN加速。在构建过程中，将引用的静态资源路径修改为CDN上对应的路径。
+  可以利用webpack对于output参数和各loader的publicPath参数来修改资源路径
+- 删除死代码（Tree Shaking）。将代码中永远不会走到的片段删除掉。
+  可以通过在启动webpack时追加参数--optimize-minimize来实现
 - 提取公共代码。
 】
 【
@@ -351,7 +354,6 @@ dll 是将第三方库打包成多个bundle，从而进行速度优化
 - 通过externals配置来提取常用库
 - 利用DllPlugin和DllReferencePlugin预编译资源模块 通过DllPlugin来对那些我们引用但是绝对不会修改的npm包来进行预编译，再通过DllReferencePlugin将预编译的模块加载进来。
 - 使用Happypack 实现多线程加速编译
-要注意的第一点是，它对file-loader和url-loader支持不好，所以这两个loader就不需要换成happypack了，其他loader可以类似地换一下
 - 使用Tree-shaking和Scope Hoisting来剔除多余代码
 - 使用fast-sass-loader代替sass-loader
 - babel-loader开启缓存
@@ -491,18 +493,9 @@ Npm包大小尽量小的解决方案：Babel 在把 ES6 代码转换成 ES5 代�
 
 module chunk bundle区别？
 【
-module - 各个源码文件，webpack中一切皆模块
+module - 各个源码文件，webpack中一切皆模块（从配置的entry中递归开始找出所有依赖的模块）
 chunk - 多模块合并成的代码块
-bundle - 最终输出文件
-】
-【
-module：是开发中的单个模块，在webpack的世界，一切皆模块，一个模块对应一个文件，webpack会从配置的entry中递归开始找出所有依赖的模块。
-chunk：代码块，一个chunk由多个模块组合而成，用于代码的合并和分割。
-bundle：是由webpack打包出来的文件，
-】
-【
-首先告诉 Webpack 一个入口文件，如 index.js 为起点作为打包，将入口文件的所有依赖项引入进来，这些依赖会跟入口文件形成一个文件（代码块），这个文件（代码块）就是 chunk
-将这个代码块（chunk）进行处理，比如把 less 文件编译成 css，js 资源编译成浏览器能识别的 js 语法等等操作，这些就叫做打包，将打包好的资源再输出出去，这个输出的文件就叫 bundle
+bundle - 最终将打包好的资源输出的文件
 】
 
 hash、chunkhash、contenthash三者的区别？
@@ -510,16 +503,21 @@ hash、chunkhash、contenthash三者的区别？
 浏览器访问网站后会强缓存资源，第二次刷新就不会请求服务器（一般会定个时间再去请求服务器），假设有了bug改动了文件，但是浏览器又不能及时请求服务器，所以就用到了文件资源缓存（改变文件名的hash值）
 - hash：不管文件变不变化，每次wepack构建时都会生成一个唯一的hash值
 - chunkhash：根据chunk生成的hash值。如果打包来源于同一个chunk，那么hash值就一样
-问题：js和css同属于一个chunk，修改css，js文件同样会被打爆
+问题：js和css同属于一个chunk，修改css，js文件同样会被打包
 - contenthash：根据文件的内容生成hash值。不同文件hash值一定不一样
 】
 
 如何在vue项目中实现按需加载？
 【
-Vue UI组件库的按需加载 为了快速开发前端项目，经常会引入现成的UI组件库如ElementUI、iView等，但是他们的体积和他们所提供的功能一样，是很庞大的。 而通常情况下，我们仅仅需要少量的几个组件就足够了，但是我们却将庞大的组件库打包到我们的源码中，造成了不必要的开销。
-不过很多组件库已经提供了现成的解决方案，如Element出品的babel-plugin-component和AntDesign出品的babel-plugin-import 安装以上插件后，在.babelrc配置中或babel-loader的参数中进行设置，即可实现组件按需加载了。
-单页应用的按需加载 现在很多前端项目都是通过单页应用的方式开发的，但是随着业务的不断扩展，会面临一个严峻的问题——首次加载的代码量会越来越多，影响用户的体验。
-通过import(*)语句来控制加载时机，webpack内置了对于import(*)的解析，会将import(*)中引入的模块作为一个新的入口在生成一个chunk。 当代码执行到import(*)语句时，会去加载Chunk对应生成的文件。import()会返回一个Promise对象，所以为了让浏览器支持，需要事先注入Promise polyfill
+Vue UI组件库的按需加载 
+为了快速开发前端项目，经常会引入现成的UI组件库如ElementUI、iView等，但是他们的体积和他们所提供的功能一样，是很庞大的。 
+而通常情况下，我们仅仅需要少量的几个组件就足够了，但是我们却将庞大的组件库打包到我们的源码中，造成了不必要的开销。
+不过很多组件库已经提供了现成的解决方案，如Element出品的babel-plugin-component和AntDesign出品的babel-plugin-import 安装以上插件后，
+在.babelrc配置中或babel-loader的参数中进行设置，即可实现组件按需加载了。
+单页应用的按需加载
+现在很多前端项目都是通过单页应用的方式开发的，但是随着业务的不断扩展，会面临一个严峻的问题——首次加载的代码量会越来越多，影响用户的体验。
+通过import(*)语句来控制加载时机，webpack内置了对于import(*)的解析，会将import(*)中引入的模块作为一个新的入口在生成一个chunk。 
+当代码执行到import(*)语句时，会去加载Chunk对应生成的文件。import()会返回一个Promise对象，所以为了让浏览器支持，需要事先注入Promise polyfill
 】
 
 webpack如何实现懒加载？
@@ -562,12 +560,18 @@ babel-runtime 不会污染全局，产出第三方lib时要用babel-runtime
 
 什么是Tree-shaking？
 【
-Tree-shaking可以用来剔除javascript中不用的死代码，它依赖静态的es6模块化语法，例如通过哦import 和export 导入导出，Tree-shaking最先在rollup中出现，webpack在2.0中将其引入，css中使用Tree-shaking需要引入Purify-CSS
+Tree-shaking可以用来剔除javascript中不用的死代码，它依赖静态的es6模块化语法，
+例如通过import 和export 导入导出，
+Tree-shaking最先在rollup中出现，webpack在2.0中将其引入，
+css中使用Tree-shaking需要引入Purify-CSS
 】
 
 通过webpack处理长缓存？
 【
-浏览器在用户访问页面的时候，为了加快加载速度，会对用户访问的静态资源进行存储，但是每一次代码升级或是更新，都需要浏览器去下载新的代码，最方便和简单的更新方式就是引入新的文件名称。在webpack中可以在output纵输出的文件指定chunkhash,并且分离经常更新的代码和框架代码。通过NameModulesPlugin或是HashedModuleIdsPlugin使再次打包文件名不变。
+浏览器在用户访问页面的时候，为了加快加载速度，会对用户访问的静态资源进行存储，
+但是每一次代码升级或是更新，都需要浏览器去下载新的代码，最方便和简单的更新方式就是引入新的文件名称。
+在webpack中可以在output纵输出的文件指定chunkhash,并且分离经常更新的代码和框架代码。
+通过NameModulesPlugin或是HashedModuleIdsPlugin使再次打包文件名不变。
 】
 
 是否写过Loader和Plugin？描述一下编写loader或plugin的思路？
@@ -581,12 +585,8 @@ loader：模块转换器，用于将模块的原内容按照需要转成你想�
 plugin：在webpack构建流程中的特定时机注入扩展逻辑，来改变构建结果，是用来自定义webpack打包过程的方式，一个插件是含有apply方法的一个对象，通过这个方法可以参与到整个webpack打包的各个流程(生命周期)。
 】
 【
-loader 模块转换器 （less->css）
-plugin 是扩展插件，如HtmlWebpackPlugin
-】
-【
 不同的作用：
-Loader直译为"加载器"。Webpack将一切文件视为模块，但是webpack原生是只能解析js文件，如果想将其他文件也打包的话，就会用到loader。 所以Loader的作用是让webpack拥有了加载和解析非JavaScript文件的能力。
+Loader直译为"加载器"。Loader的作用是让webpack拥有了加载和解析非JavaScript文件的能力。
 Plugin直译为"插件"。Plugin可以扩展webpack的功能，让webpack具有更多的灵活性。 在 Webpack 运行的生命周期中会广播出许多事件，Plugin 可以监听这些事件，在合适的时机通过 Webpack 提供的 API 改变输出结果。
 不同的用法：
 Loader在module.rules中配置，也就是说他作为模块的解析规则而存在。 类型为数组，每一项都是一个Object，里面描述了对于什么类型的文件（test），使用什么加载(loader)和使用的参数（options）
