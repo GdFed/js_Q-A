@@ -140,6 +140,7 @@ plugin
 常见plugin
 loader与plugin区别
 webpack-dev-middleware
+webpack-hot-middleware
 ast
 vue-cli
 面经

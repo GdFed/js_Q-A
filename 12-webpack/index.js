@@ -9,6 +9,7 @@ plugin
 常见plugin
 loader与plugin区别
 webpack-dev-middleware
+webpack-hot-middleware
 ast
 vue-cli
 面经
@@ -230,6 +231,11 @@ commons-chunk-plugin
 */
 
 // webpack-dev-middleware
+/*
+webpack-dev-middleware 是一个容器(wrapper)，它可以把 webpack 处理后的文件传递给一个服务器(server)
+在内部使用Express搭建搭建了一个小型Node服务来接收处理后的文件
+*/
+// webpack-hot-middleware
 /*
 
 */
