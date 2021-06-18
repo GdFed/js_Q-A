@@ -8,8 +8,8 @@ loader
 plugin
 常见plugin
 loader与plugin区别
+自动刷新&HMR
 webpack-dev-middleware
-webpack-hot-middleware
 ast
 vue-cli
 面经
@@ -146,7 +146,7 @@ module.exports = function(source){
 }
 // 常见loader
 /*
-style-loader: 将css添加到DOM的内联样式标签style里
+style-loader: 将css添加到DOM的内联样式标签style里（实现了HMR接口，所以在样式更新的时候，新样式替换老样式）
 css-loader :允许将css文件通过require的方式引入，并返回css代码
 less-loader: 处理less
 sass-loader: 处理sass
@@ -230,14 +230,35 @@ commons-chunk-plugin
 - plugins 在整个编译周期都起作用
 */
 
+// 自动刷新&HMR
+/*
+1. 自动刷新(devServer:{inline:true（默认）})：--watch 
+1.1 源码分析：./lib/webpack.js --> if(watch){compiler.watch()}else{compiler.run()}
+1.2 监听文件修改，对相关模块重新打包并保存在内存中（默认是关闭watch监听）
+1.3 webpack-dev-server 
+1.3.1 webpack 自带watch监听，支持sourceMap
+1.3.2 关键点
+1.3.2.1 自动开启watch监听模式
+1.3.2.2 启动http服务（express），webpack-dev-middleware作为express的中间件使用，app.listen回调中启动socket服务
+2. HMR(hot module replacement): --hot 只能开发环境使用
+2.1 通过非刷新的方式自动更新，提高开发效率
+2.2 关键点
+2.2.1 使用webpack-dev-server作为服务器启动
+2.2.2 webpack.config的devServer中配置hot: true
+2.2.3 webpack.config的plugins增加webpack.HotModuleReplacementPlugin
+2.2.4 使用module.hot.accept增加HMR代码
+2.2.4.1 style-loader自动处理了css代码的HMR（见源码）
+2.2.5 HMR API
+2.2.5.1 accept
+2.2.5.2 decline
+2.2.5.3 dispose
+2.2.5.4 status
+*/
+
 // webpack-dev-middleware
 /*
 webpack-dev-middleware 是一个容器(wrapper)，它可以把 webpack 处理后的文件传递给一个服务器(server)
 在内部使用Express搭建搭建了一个小型Node服务来接收处理后的文件
-*/
-// webpack-hot-middleware
-/*
-
 */
 
 // ast
@@ -551,19 +572,6 @@ output: {
 },
 】
 
-babel-polyfill babel-runtime区别？
-【
-babel-polyfill 会污染全局
-babel-runtime 不会污染全局，产出第三方lib时要用babel-runtime
-】
-
-为什么proxy不能被polyfill？
-【
-如 Class 可以用 function 模拟
-如 Promise 可以用 callback 模拟
-但是 Proxy 功能用 Object.defineProperty 无法模拟
-】
-
 什么是Tree-shaking？
 【
 Tree-shaking可以用来剔除javascript中不用的死代码，它依赖静态的es6模块化语法，
@@ -578,6 +586,20 @@ css中使用Tree-shaking需要引入Purify-CSS
 但是每一次代码升级或是更新，都需要浏览器去下载新的代码，最方便和简单的更新方式就是引入新的文件名称。
 在webpack中可以在output纵输出的文件指定chunkhash,并且分离经常更新的代码和框架代码。
 通过NameModulesPlugin或是HashedModuleIdsPlugin使再次打包文件名不变。
+】
+【
+1. 文件不随编译变化
+文件hash不使用[hash]，而使用[chunkhash]，使得文件只随着内容变化，不随着编译变化，[hash]是每次编译都变化一次
+2. css文件不受js模块变化影响
+css文件hash使用contenthash，这样不受js模块变化影响
+3. 提取vendor
+公共库不受业务模块变化影响
+4. 内联webpack runtime到页面
+chunkId变化不影响vendor，不占用http请求，使用chunk-manifest-webpack-plugin提取，gulp-inject插入到页面
+5. 保证module Id稳定
+模块的新增或删除，会导致其后面的所有模块id重新排序，为避免这个问题，不使用数字作为模块id，改用文件内容的hash值，使用HashedModuleIdsPlugin可以解决
+6. 保证chunkhash稳定
+使用webpack-chunk-hash，替代webpack自己的hash算法。webpack自己的hash算法，对于同一个文件，在不同开发环境下，会计算出不用的hash值，不能满足跨平台需求。
 】
 
 是否写过Loader和Plugin？描述一下编写loader或plugin的思路？

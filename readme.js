@@ -139,8 +139,8 @@ loader
 plugin
 常见plugin
 loader与plugin区别
+自动刷新&HMR
 webpack-dev-middleware
-webpack-hot-middleware
 ast
 vue-cli
 面经
@@ -155,6 +155,7 @@ git（hooks）
 代码检查（prettier，eslint，postcss，posthtml）
 babel
 shell
+面经
 ********/
 
 // 14-http
