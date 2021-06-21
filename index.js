@@ -14,6 +14,8 @@ pathFiles.forEach(pathName=>{
             content: $_ || ''
         })
     })
+    let existsFs = fs.existsSync(path.join(__dirname, './demo/', pathName))
+    existsFs || fs.mkdirSync(path.join(__dirname, './demo/', pathName))
 })
 
 let contentStr = contentArr.reduce((a,b)=> a + `\/\/ ${b.title}\r\n${b.content}\r\n\n`, '')

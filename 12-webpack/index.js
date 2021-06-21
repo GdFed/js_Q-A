@@ -10,6 +10,9 @@ plugin
 loader与plugin区别
 自动刷新&HMR
 webpack-dev-middleware
+webpack和webpack-cli的区别
+app&&vendor&manifest
+config.optimization.splitChunks & webpack.optimize.CommonsChunkPlugin
 ast
 vue-cli
 面经
@@ -261,6 +264,117 @@ webpack-dev-middleware 是一个容器(wrapper)，它可以把 webpack 处理后
 在内部使用Express搭建搭建了一个小型Node服务来接收处理后的文件
 */
 
+// webpack和webpack-cli的区别
+/*
+webpack4.0之前，webpack-cli是合在webpack包里面的
+webpack-cli主要是webpack的shell脚本执行的封装
+*/
+
+// app&&vendor&manifest
+/*
+app: 入口js;(不是按需加载的；按需加载的会单独生成js)
+vendor: 通过提取公共模块插件来提取的代码块（webpack本身带的模块化代码部分）;(vue-cli默认的vendor是打包node_module下的所有依赖)
+manifest: 在vendor的基础上，再抽取出要经常变动的部分，比如关于异步加载js模块部分的内容;（最后一个chunk，被注入了webpackJsonp的定义及异步加载相关的定义）
+CommonsChunkPlugin: 抽取的是公共部分而不是"经常变动的部分";
+*注意!!!: webpack.optimize.CommonsChunkPlugin 在webpack3已经被弃用，webpack4需要使用新的配置 config.optimization.splitChunks
+*/
+
+// config.optimization.splitChunks & webpack.optimize.CommonsChunkPlugin
+/*
+webpack4.0对代码模块的关系图进行了一些巨大的优化
+
+1 config.optimization.splitChunks:
+1.1 使用模块引用计数和模块类别区分(比如:node_modules)来自动分离出需要被拆分的文件内引用模块。
+1.1.1 webpack将根据以下条件自动拆分代码块：
+  - 会被共享的代码块或者 node_mudules 文件夹中的代码块
+  - 体积大于30KB的代码块（在gz压缩前）
+  - 按需加载代码块时的并行请求数量不超过5个
+  - 加载初始页面时的并行请求数量不超过3个
+1.2 SplitChunksPlugin提供了更多的特性:
+  - 不会加载非必须文件（除非进行了强制合并）
+  - 异步文件处理更有效率。
+  - 默认异步处理文件。
+  - 它将引用模块分散到多个库文件中。
+  - 更容易使用。
+  - 不依赖文件引用关系图。
+  - 更加的自动化。
+1.3 splitChunks基本配置
+  {
+    chunks： 'all'|'async'|'initial' // （默认值：'async'）配置后，代码分割优化仅选择初始块，按需块或所有块
+    minSize: 30000,   // （默认值：30000）当模块大于minSize时，进行代码分割
+    maxSize: 50*1024,   // 当模块大于maxSize时，尝试将该模块拆分
+    minChunks: 1,    // （默认值：1）在拆分之前共享模块的最小块数
+    maxAsyncRequests: 5,   //（默认为5）按需加载时的最大并行请求数(若代码分割设置的是一个库分割成一个模块，打开某个页面时同时需要加载10个库，设置maxAsyncRequests：5，只会将那10个库分割成5个模块)
+    maxInitialRequests: 3,  //（默认值为3）入口点的最大并行请求数
+    automaticNameDelimiter: '~', // 缓存组名称和生成文件名称之间的连接字符串
+    name: true, // 缓存组里面的filename生效，覆盖默认命名方式
+    // 除了test, priority和reuseExistingChunk只能写在cacheGroups里，其他属性都能直接写在splitChunks下。
+    cacheGroups: {  // 以上条件都满足后会走入cacheGroups进一步进行优化的判断
+      vendors: {
+        test: /[\\/]node_modules[\\/]/,  // 判断引入库是否是node_modules里的
+        priority: -10,   // 数字越大优先级越高 （-10大于-20）
+        filename: 'vendors.js'  // 设置代码分割后的文件名
+      },
+      antDesignVue: {
+        name: 'chunk-ant-design-vue',
+        test: /[\\/]node_modules[\\/]ant-design-vue[\\/]/,
+        chunks: 'initial',
+        priority: 3,
+        reuseExistingChunk: true,
+        enforce: true // 强制为这个缓存组创建 chunks
+      },
+      default: {   //所有代码分割快都符合默认值，此时判断priority优先级
+        minChunks: 2,  
+        priority: -20,
+        reuseExistingChunk: true   // 允许在模块完全匹配时重用现有的块，而不是创建新的块。
+      }
+    }
+  }
+1.4 config.optimization.runtimeChunk
+  - 为了线上更新版本时，充分利用浏览器缓存，使用户感知的影响到最低。
+  - 通过optimization.runtimeChunk: true选项，webpack会添加一个只包含运行时(runtime)额外代码块到每一个入口。
+  - 注：这个需要看场景使用，会导致每个入口都加载多一份运行时代码
+  - 理解（https://www.jianshu.com/p/714ce38b9fdc）
+1.4.1 基本配置
+  runtimeChunk: {
+    name: entrypoint => `manifest.${entrypoint.name}`
+  }
+2. webpack.optimize.CommonsChunkPlugin:
+2.1 CommonsChunkPlugin存在以下这些问题：
+  - 需要下载当前还不需要使用的代码文件。
+  - 异步加载使用文件效率低下。
+  - 很难使用。（猜测这里指的是配置）
+  - 实现方式很难理解。
+2.2 基本配置
+  new webpack.optimize.CommonsChunkPlugin({  // 这里的意思是将node_module中的模块抽离出来，成为vendor
+    name: 'vendor',
+    minChunks: function (module, count) {
+      // any required modules inside node_modules are extracted to vendor<br>　　　　 // 判断三个条件：有在处理的模块，并且是js文件，并且这个文件是在node_modules中
+      return (
+        module.resource &&
+        /\.js$/.test(module.resource) &&
+        module.resource.indexOf(
+          path.join(__dirname, '../node_modules')
+        ) === 0
+      )
+    }
+  }),
+  new webpack.optimize.CommonsChunkPlugin({  // 这里是从vendor里面把runtime 这部分代码抽离出来，名字是manifest
+    name: 'manifest',
+    chunks: ['vendor'] // 这个属性的意思是通过 chunk name 去选择 chunks 的来源。chunk 必须是  公共chunk 的子模块，指定source chunk，即指定从哪些chunk当中去找公共模块，省略该选项的时候，默认就是entry chunks
+    // minChunks: Infinity  // 这种写法和上面的写法效果一样，会马上生成公共chunk，但里面没有模块
+  }),
+3. CommonsChunkPlugin && DllPlugin&DllReferencePlugin && SplitChunks
+3.1 CommonsChunkPlugin
+将指定的模块或者公用模块打包出来，减少主bundle文件的体积，配合缓存策略，加快应用访问速度
+缺陷：如果在业务代码中删除和增加三方库依赖，vendor是会变化的
+3.2 DllPlugin&DllReferencePlugin
+使用 webpack 内置的 DllPlugin 和 DllReferencePlugin插件，通过这两个插件提前对这些公共模块进行独立编译，打出一个 vendor.dll.js 的包，
+之后在这部分代码没有改动的情况下不再对它们进行编译，所以项目平时的构建速度也会提升不少。
+vendor.dll.js 包独立存在，hash 不会发生变化，特别适合持久化缓存。
+3.3 SplitChunks
+*/
+
 // ast
 /*
 acorn
@@ -268,8 +382,34 @@ acorn
 
 // vue-cli
 /*
+1. 一个基于 Vue.js 进行快速开发的完整系统
+- 通过 @vue/cli 实现的交互式的项目脚手架
+- 通过 @vue/cli + @vue/cli-service-global 实现的零配置原型开发
+- 一个运行时依赖 (@vue/cli-service)，该依赖：
+  可升级；
+  基于 webpack 构建，并带有合理的默认配置；
+  可以通过项目内的配置文件进行配置；
+  可以通过插件进行扩展。
+- 一个丰富的官方插件集合，集成了前端生态中最好的工具
+- 一套完全图形化的创建和管理 Vue.js 项目的用户界面
 
+2. CLI (@vue/cli) 是一个全局安装的 npm 包，提供了终端里的 vue 命令
+- 可以通过 vue create 快速搭建一个新项目，
+- 或者直接通过 vue serve 构建新想法的原型
+- 也可以通过 vue ui 通过一套图形化界面管理你的所有项目
+
+3. CLI 服务 (@vue/cli-service) 是一个开发环境依赖。它是一个 npm 包，局部安装在每个 @vue/cli 创建的项目中。
+- CLI 服务是构建于 webpack 和 webpack-dev-server 之上的
+  加载其它 CLI 插件的核心服务；
+  一个针对绝大部分应用优化过的内部的 webpack 配置；
+  项目内部的 vue-cli-service 命令，提供 serve、build 和 inspect 命令。
+
+4. Vue CLI 插件的名字以 @vue/cli-plugin- (内建插件) 或 vue-cli-plugin- (社区插件) 开头
+
+@vue/cli用来提供终端的 vue 命令
+@vue/cli-service用来搭建vue项目web服务
 */
+
 
 // 面经
 /*
@@ -581,6 +721,7 @@ css中使用Tree-shaking需要引入Purify-CSS
 】
 
 通过webpack处理长缓存？
+【https://blog.csdn.net/rainbow8590/article/details/81331199】
 【
 浏览器在用户访问页面的时候，为了加快加载速度，会对用户访问的静态资源进行存储，
 但是每一次代码升级或是更新，都需要浏览器去下载新的代码，最方便和简单的更新方式就是引入新的文件名称。
