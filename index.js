@@ -16,6 +16,12 @@ pathFiles.forEach(pathName=>{
     })
     let existsFs = fs.existsSync(path.join(__dirname, './demo/', pathName))
     existsFs || fs.mkdirSync(path.join(__dirname, './demo/', pathName))
+    // content.replace(/<demo[\s\S]+\/>/, $_ => {
+    //     let demo = $_.trim()
+    //     let existsFs = fs.existsSync(path.join(__dirname, './demo/', demo))
+    //     demo = `${pathName}-${demo}`
+    //     existsFs || fs.mkdirSync(path.join(__dirname, './demo/', demo))
+    // })
 })
 
 let contentStr = contentArr.reduce((a,b)=> a + `\/\/ ${b.title}\r\n${b.content}\r\n\n`, '')
