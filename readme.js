@@ -141,6 +141,9 @@ plugin
 loader与plugin区别
 自动刷新&HMR
 webpack-dev-middleware
+webpack和webpack-cli的区别
+app&&vendor&manifest
+config.optimization.splitChunks & webpack.optimize.CommonsChunkPlugin
 ast
 vue-cli
 面经
@@ -202,6 +205,8 @@ tapable
 国际化
 大文件(断点)上传
 element二次封装
+element按需加载
+自建前端脚手架
 长列表
 懒加载
 单点登陆
