@@ -25,6 +25,7 @@ then
 echo "push remote gitee !"
 git push gitee master
 elif [[ $3 = "origin" ]]
+then
 echo "push remote github !"
 git push origin master
 else
