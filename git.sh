@@ -17,6 +17,7 @@ fi
 
 git commit -m "$dt"
 
+echo "$?"
 if [[ "$?" != "0" ]]; then
   echo "No update !"
   exit
@@ -34,6 +35,8 @@ echo "push remote both !"
 git push gitee master
 git push origin master
 fi
+
+exec /bin/bash
 # ./git.sh
 # ./git.sh 1
 # ./git.sh 0 commit
