@@ -19,7 +19,6 @@ fi
 echo ("$?" != "0")
 if [[ "$?" != "0" ]]; then
   echo "No update !"
-  # exit
 fi
 
 if [[ $3 = "gitee" ]]
