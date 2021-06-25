@@ -38,4 +38,4 @@ fi
 # chmod 777 ./git.sh
 # chmod +x ./git.sh
 
-exec /bin/bash
+# exec /bin/bash # keep window
