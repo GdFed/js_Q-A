@@ -20,18 +20,18 @@ if [[ "$?" != "0" ]]; then
   echo "No update !"
 fi
 
-# if [[ $3 = "gitee" ]]
-# then
-# echo "push remote gitee !"
-# git push gitee master
-# elif [[ $3 = "origin" ]]
-# echo "push remote github !"
-# git push origin master
-# else
-# echo "push remote both !"
-# git push gitee master
-# git push origin master
-# fi
+if [[ $3 = "gitee" ]]
+then
+echo "push remote gitee !"
+git push gitee master
+elif [[ $3 = "origin" ]]
+echo "push remote github !"
+git push origin master
+else
+echo "push remote both !"
+git push gitee master
+git push origin master
+fi
 
 # chmod 777 ./git.sh
 # chmod +x ./git.sh
