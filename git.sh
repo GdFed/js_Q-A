@@ -17,6 +17,11 @@ fi
 
 git commit -m "$dt"
 
+if [[ $? != 0 ]]; then
+  echo "No update !"
+  exit
+fi
+
 if [[ $3 = "gitee" ]]
 then
 echo "push remote gitee !"
