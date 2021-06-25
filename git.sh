@@ -35,10 +35,8 @@ echo "push remote both !"
 git push gitee master
 git push origin master
 fi
-# ./git.sh
-# ./git.sh 1
-# ./git.sh 0 commit
-# ./git.sh 1 commit
+
 # chmod 777 ./git.sh
 # chmod +x ./git.sh
+
 exec /bin/bash
