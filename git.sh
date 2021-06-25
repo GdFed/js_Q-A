@@ -16,7 +16,15 @@ echo "date commit: "$dt
 fi
 
 git commit -m "$dt"
-git push
+
+if [[ $3 = "gitee" ]]
+then
+echo "push remote gitee !"
+git push gitee master
+else
+echo "push remote github !"
+git push origin master
+fi
 # ./git.sh
 # ./git.sh 1
 # ./git.sh 0 commit
