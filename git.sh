@@ -26,8 +26,12 @@ if [[ $3 = "gitee" ]]
 then
 echo "push remote gitee !"
 git push gitee master
-else
+elif [[ $3 = "origin" ]]
 echo "push remote github !"
+git push origin master
+else
+echo "push remote both !"
+git push gitee master
 git push origin master
 fi
 # ./git.sh
