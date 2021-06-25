@@ -16,7 +16,7 @@ echo "date commit: "$dt
 git commit -m "$dt"
 fi
 
-echo ("$?" != "0")
+echo "$?" != "0"
 # if [[ "$?" != "0" ]]; then
 #   echo "No update !"
 # fi
