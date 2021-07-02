@@ -6,8 +6,18 @@ git（hooks）
 代码检查（prettier，eslint，postcss，posthtml）
 babel
 shell
+monorepo
 面经
 ********/
+
+// monorepo
+/*
+Monorepo(monolithic repository) 是管理项目代码的一个方式，指在一个项目仓库 (repo) 中管理多个模块/包 (package)，不同于常见的每个模块建一个 repo。
+monorepo 管理代码只要搭建一套脚手架，就能管理（构建、测试、发布）多个 package。
+目前最常见的 monorepo 解决方案是 lerna 和 yarn 的 workspaces 特性。用 yarn 处理依赖问题，lerna处理发布问题。
+Lerna
+
+*/
 
 // 面经
 /*
