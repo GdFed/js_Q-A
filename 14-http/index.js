@@ -17,6 +17,61 @@ keep-alive
 面经
 ********/
 
+// 1.0/1.1/2.0
+/*
+http/1.0
+
+http/1.1
+  主流
+  缺陷：
+    HTTP 1.1过于庞大
+    过多的可选项（HTTP管线化（HTTP Pipelining））
+    未能被充分利用的TCP（更好的利用TCP来减少传输过程中的暂停，并充分挖掘利用那些本可以用于发送/接受更多数据的时间）
+    传输大小和资源数量
+    恼人的延迟（1.1对网络延迟非常敏感：部分原因是HTTP Pipelining还有很多问题，大部分用户默认关闭的。）
+    线头阻塞（Head of line blocking）
+  前端克服1.1缺陷
+    Spriting
+    内联（Inlining）
+    拼接（Concatenation）
+    分片（Sharding）
+  升级HTTP
+    降低协议对延迟的敏感
+    修复pipelining和head of line blocking的问题
+    防止主机需求更高的连接数量
+    保留所有现有的接口，内容，URI格式和结构
+http/2.0
+  概念
+    二进制协议
+    多路复用的流
+    优先级和依赖性
+    头压缩
+    重置
+    服务器推送
+    流量控制
+
+*/
+
+// https
+/*
+http转https
+提供自动的重定向使得HTTP页面导向HTTPS版本
+  server {
+    listen       80;
+    server_name  xxx.com www.xxx.com;
+    rewrite ^(.*) https://$host$1 permanent;
+  }
+更佳操作：配合 HSTS（HTTP严格传输安全） 策略
+HSTS
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  这是一种网站用来声明他们只能使用安全连接（HTTPS）访问的方法
+  如果一个网站声明了 HSTS 策略，浏览器必须拒绝所有的 HTTP 连接并阻止用户接受不安全的 SSL 证书
+  第一次访问的网站，不受 HSTS 的保护（可以使用称为 HSTS 预加载列表（HSTS preload list）的附加保护方法）
+    如果你把你的网站添加到预加载列表中，浏览器会首先检查内部列表，这样你的网站就永远不会通过 HTTP 访问，甚至在第一次连接尝试时也不会。
+    这个方法不是 HSTS 标准的一部分，但是它被所有主流浏览器(Chrome、 Firefox、 Safari、 Opera、 IE11 和 Edge)使用
+  chrome://net-internals/#hsts，删除缓存的domain
+*/
+
 // TCP
 /*
 tips:
