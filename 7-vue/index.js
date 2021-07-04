@@ -13,8 +13,38 @@ slot
 组件通信
 nuxt
 指令（v-directive）
+vue-loader
 面经
 ********/
+
+// vue-loader
+/*
+手动配置（cli新版本）
+  plugins: require('vue-loader/lib/plugin')
+    new VueLoaderPlugin()
+    将定义过的其他规则复制并应用到.vue文件里相应语言块（/.js$/规则也会应用与.vue文件里的<script>）
+热重载
+  - 不只是重新加载，载不刷新页面的情况下替换所有组件实例并保持当前状态
+  - 状态保留规则
+    编辑<template>，这个组件实例就地重新渲染并保留当前所有私有状态（因为模板被编译成了新的无副作用的渲染函数）
+    编辑<script>，这个组件实例将就地销毁并重新创建（应用中其他组件状态将会被保留），如果这个组件带有全局副作用，则整个页面将会被重新加载
+    编辑<style>，会通过vue-style-loader自行热加载，不会影响应用状态
+CSS提取
+  rules: 'mini-css-extract-plugin'
+    {test: '/\.css%/', use: [process.env.NODE_ENV!=='production'?'vue-style-loader':MiniCssExtractPlugin.loader, 'css-loader']}
+  plugins: 'mini-css-extract-plugin'
+    new MiniCssExtractPlugin({filename: style.css})
+代码校验（linting）
+  eslint
+    - .eslintrc.js
+      module.exports={extends: ["plugin: vue/essential"]}
+    - rules: 'eslint-loader'
+      {enforce:'pre', test: '/.(js|vue)$/', loader: 'eslint-loader', exclude: /node_modules/}
+  stylelint
+    - plugin: 'stylelint-webpack-plugin'
+      new StyleLintPlugin({files: ['**\/*.{vue,htm,html,css,sss,less,scss,sass}']})
+*/
+
 // 面经
 /*
 vue双向绑定原理？

@@ -10,6 +10,11 @@ monorepo
 面经
 ********/
 
+// babel
+/*
+
+*/
+
 // monorepo
 /*
 Monorepo(monolithic repository) 是管理项目代码的一个方式，指在一个项目仓库 (repo) 中管理多个模块/包 (package)，不同于常见的每个模块建一个 repo。
@@ -32,6 +37,20 @@ babel-runtime 不会污染全局，产出第三方lib时要用babel-runtime
 如 Class 可以用 function 模拟
 如 Promise 可以用 callback 模拟
 但是 Proxy 功能用 Object.defineProperty 无法模拟
+】
+
+babel polyfill 有三种
+babel-runtime
+babel-plugin-transform-runtime
+babel-polyfill
+几个包的包含关系？
+【
+babel-polyfill仅仅是引用core-js、regenerator-runtime这两个npm包。
+@babel/runtime包含两个文件夹：helpers（定义了一些处理新的语法关键字的帮助函数）、regenerator（仅仅是引用regenerator-runtime这个npm包）。
+@babel/runtime-corejs2包含三个文件夹：core-js（引用core-js这个npm包）、helpers（定义了一些处理新的语法关键字的帮助函数）、regenerator（仅仅是引用regenerator-runtime这个npm包）。
+可以看出，@babel/runtime-corejs2≈@babel/runtime + babel-polyfill：
+@babel/runtime只能处理语法关键字，而@babel/runtime-corejs2还能处理新的全局变量（例如，Promise）、新的原生方法（例如，String.padStart ）；
+使用了@babel/runtime-corejs2，就无需再使用@babel/runtime了。
 】
 */
 
