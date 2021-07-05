@@ -32,42 +32,42 @@ call，apply，bind
 5.2 案例解释
 */
 function scope () {
-    var fns = []
-    // 函数作用域缺陷（异常的变量传递）（导致原因：函数作用域内变量i为全局变量）
-    for(var i=0;i<5;i++){
-        fns[i] = function(){
-            console.log(i)
-        }
+  var fns = []
+  // 函数作用域缺陷（异常的变量传递）（导致原因：函数作用域内变量i为全局变量）
+  for (var i = 0; i < 5; i++) {
+    fns[i] = function () {
+      console.log(i)
     }
-    fns.forEach(fn=>fn()) // 5 5 5 5 5
-    // es6之前，实现块级作用域(自执行函数)，可以将全局变量j作为形参变量传递给函数作用域内使用
-    for(var j=0;j<5;j++){
-        (function(j){
-            fns[j] = function(){
-                console.log(j)
-            }
-        })(j)
+  }
+  fns.forEach(fn => fn()) // 5 5 5 5 5
+  // es6之前，实现块级作用域(自执行函数)，可以将全局变量j作为形参变量传递给函数作用域内使用
+  for (var j = 0; j < 5; j++) {
+    (function (j) {
+      fns[j] = function () {
+        console.log(j)
+      }
+    })(j)
+  }
+  fns.forEach(fn => fn()) // 0 1 2 3 4
+  // es6之后，for代码块产生块级作用域，let申明的变量k在块级作用域内使用
+  for (let k = 0; k < 5; k++) {
+    fns[k] = function () {
+      console.log(k)
     }
-    fns.forEach(fn=>fn()) // 0 1 2 3 4
-    // es6之后，for代码块产生块级作用域，let申明的变量k在块级作用域内使用
-    for(let k=0;k<5;k++){
-        fns[k] = function(){
-            console.log(k)
-        }
-    }
-    fns.forEach(fn=>fn()) // 0 1 2 3 4
+  }
+  fns.forEach(fn => fn()) // 0 1 2 3 4
 }
 // scope()
-function lexicalScope(){
-    function foo() {
-        console.log(a); // 2 in Lexical Scope ，But 3 in Dynamic Scope // 打印 2
-    } 
-    function bar() {
-        var a = 3;
-        foo();
-    }
-    var a = 2;
-    bar();
+function lexicalScope () {
+  function foo () {
+    console.log(a); // 2 in Lexical Scope ，But 3 in Dynamic Scope // 打印 2
+  }
+  function bar () {
+    var a = 3;
+    foo();
+  }
+  var a = 2;
+  bar();
 }
 // lexicalScope()
 
@@ -87,15 +87,15 @@ let/const 只有申明提升，初始化和赋值不提升；在申明初始化�
 案例解释
 */
 function hoisting () {
-    // var 声明初始化提升,赋值不提升 打印undefined
-    // console.log(a)
-    // var a = 'a'
-    // function 声明初始化以及赋值提升 打印函数体function b(){}
-    // console.log(b)
-    // function b(){}
-    // let 只有声明提升 没有初始化值访问不到，报错 Cannot access 'c' before initialization // 初始化前无法访问“c”
-    // console.log(c)
-    // let c = 'c'
+  // var 声明初始化提升,赋值不提升 打印undefined
+  // console.log(a)
+  // var a = 'a'
+  // function 声明初始化以及赋值提升 打印函数体function b(){}
+  // console.log(b)
+  // function b(){}
+  // let 只有声明提升 没有初始化值访问不到，报错 Cannot access 'c' before initialization // 初始化前无法访问“c”
+  // console.log(c)
+  // let c = 'c'
 }
 // console.log(a) // a is not defined
 // hoisting()
@@ -140,41 +140,41 @@ function hoisting () {
 3. Object.prototype.toString.call 返回一个表示该对象的字符串
 */
 function dataType () {
-    let valueOf = Object.prototype.valueOf
-    let toString = Object.prototype.toString
-    Object.prototype.valueOf = function(){
-        console.log('valueOf')
-        return valueOf.call(this)
-    }
-    Object.prototype.toString = function(){
-        console.log('toString') // toString打印不出来，说明不能重写
-        return toString.call(this)
-    }
-    function Foo () {}
-    Foo.prototype.toString = function () {
-        console.log('toString Foo')
-    }
-    let foo = new Foo()
-    console.log(foo==1) // 曲线救国：先打印valueOf后打印toString Foo，最后打印返回 false
-    console.log(!new Date()==1) // 只打印false，说明只执行toString并返回
+  let valueOf = Object.prototype.valueOf
+  let toString = Object.prototype.toString
+  Object.prototype.valueOf = function () {
+    console.log('valueOf')
+    return valueOf.call(this)
+  }
+  Object.prototype.toString = function () {
+    console.log('toString') // toString打印不出来，说明不能重写
+    return toString.call(this)
+  }
+  function Foo () { }
+  Foo.prototype.toString = function () {
+    console.log('toString Foo')
+  }
+  let foo = new Foo()
+  console.log(foo == 1) // 曲线救国：先打印valueOf后打印toString Foo，最后打印返回 false
+  console.log(!new Date() == 1) // 只打印false，说明只执行toString并返回
 }
 // dataType()
-function detecteTypeOf(val){
-    return typeof val
+function detecteTypeOf (val) {
+  return typeof val
 }
 // console.log(detecteTypeOf('1')) // string
 // console.log(detecteTypeOf(String(1))) // string
 // console.log(detecteTypeOf(new String(1))) // object
-function detecteInstanceOf(obj, origin){
-    return obj instanceof origin
-    // return Object.getPrototypeOf(obj) === origin.prototype
-    // return obj.__proto__ === origin.prototype
+function detecteInstanceOf (obj, origin) {
+  return obj instanceof origin
+  // return Object.getPrototypeOf(obj) === origin.prototype
+  // return obj.__proto__ === origin.prototype
 }
-function Foo(){};let foo = new Foo();
+function Foo () { }; let foo = new Foo();
 // console.log(detecteInstanceOf(foo, Foo)) // 右侧必须是可调函数
 // console.log(detecteInstanceOf(foo, {a:1})) // Right-hand side of 'instanceof' is not callable “instanceof”的右侧不可调用
 function toStringCall (val) {
-    return Object.prototype.toString.call(val)
+  return Object.prototype.toString.call(val)
 }
 console.log(toStringCall(1))
 
@@ -185,7 +185,7 @@ console.log(toStringCall(1))
 
 // 面经
 /*
-typeif null?null instanceof Object?
+typeof null?null instanceof Object?
 typeof可以判断哪些类型？instanceof做了什么？
 实现一个bind函数
 */

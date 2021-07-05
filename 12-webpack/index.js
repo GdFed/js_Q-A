@@ -1,6 +1,6 @@
 /********
 简述
-编译过程
+编译过程（参数初始化，生成编译器，确定入口，生成模块依赖树，根据chunk进行打包，生成bundle文件到指定目录）
 编译生命周期钩子
 hooks设计原理：tapable
 loader
@@ -38,10 +38,10 @@ vue-cli
 /*
 hooks设计原理：tapable（https://github.com/webpack/tapable#tapable）
 const {
-	SyncHook,
-	SyncBailHook,
-	AsyncParallelHook,
-	AsyncSeriesHook
+  SyncHook,
+  SyncBailHook,
+  AsyncParallelHook,
+  AsyncSeriesHook
 } = require("tapable");
 
 compiler钩子：https://webpack.docschina.org/api/compiler-hooks/
@@ -59,11 +59,11 @@ done：完成所有的编译过程。
 failed：编译失败的时候。
 
 this.hooks = Object.freeze({
-			initialize: new SyncHook([]),
-			shouldEmit: new SyncBailHook(["compilation"]),
-			done: new AsyncSeriesHook(["stats"]),
+      initialize: new SyncHook([]),
+      shouldEmit: new SyncBailHook(["compilation"]),
+      done: new AsyncSeriesHook(["stats"]),
             ...
-		});
+    });
 
 创建两个核心对象:
 - compiler：包含了 webpack 环境的所有的配置信息，包括 options，loader 和 plugin，和 webpack 整个生命周期相关的钩子
@@ -130,22 +130,22 @@ compilation 实例能够访问所有的模块和它们的依赖（大部分是�
 1.7 案例解释
 */
 // 1. 导出一个函数，source为webpack传递给loader的文件源内容（函数中的 this 作为上下文会被 webpack 填充，因此我们不能将 loader设为一个箭头函数）
-module.exports = function(source){
-    const content = doSomeThing2JsString(source)
-    // 2. 如果loader配置了options对象，那么this.query将指向options
-    const options = this.query
-    // 3. 可以用作解析其他模块路径的上下文
-    console.log('this.context')
-    /*
-    this.callback参数：
-    error：Error|null 当loader出错时向外抛出一个error
-    content：String|Buffer 经过loader编译后需要导出的内容
-    sourceMap：为方便调试生成的编译后内容的source map
-    ast：本次编译生成的AST抽象语法树，之后执行的loader可以直接使用这个AST，进而省去重复生成AST的过程
-    */
-   
-   this.callback(null, content) // 异步
-   return content // 同步
+module.exports = function (source) {
+  const content = doSomeThing2JsString(source)
+  // 2. 如果loader配置了options对象，那么this.query将指向options
+  const options = this.query
+  // 3. 可以用作解析其他模块路径的上下文
+  console.log('this.context')
+  /*
+  this.callback参数：
+  error：Error|null 当loader出错时向外抛出一个error
+  content：String|Buffer 经过loader编译后需要导出的内容
+  sourceMap：为方便调试生成的编译后内容的source map
+  ast：本次编译生成的AST抽象语法树，之后执行的loader可以直接使用这个AST，进而省去重复生成AST的过程
+  */
+
+  this.callback(null, content) // 异步
+  return content // 同步
 }
 // 常见loader
 /*
@@ -173,21 +173,21 @@ babel-loader :用babel来转换ES6文件到ES
 // 1.plugin名称
 const MY_PLUGIN_NAME = 'MyBasicPlugin'
 class MyBasicPlugin {
-    // 2.在构建函数中获取插件配置项
-    constructor(option){
-        this.option = option
-    }
-    // 3.在原型对象上定义一个apply函数供webpack调用
-    apply(compiler){
-        // 4.注册webpack事件监听函数compiler.hooks.[hook].[tapPromise|tapAsync|tap]
-        compiler.hooks.emit.tapAsync(MY_PLUGIN_NAME, (compilation, asyncCallback)=>{
-            // 5.操作or改变compilation内部数据
-            console.log(compilation)
-            console.log('当前阶段===>编译完成，即将输出到output目录')
-            // 6.如果是异步钩子，结束后需要执行异步回调
-            typeof asyncCallback === 'function' && asyncCallback()
-        })
-    }
+  // 2.在构建函数中获取插件配置项
+  constructor(option) {
+    this.option = option
+  }
+  // 3.在原型对象上定义一个apply函数供webpack调用
+  apply (compiler) {
+    // 4.注册webpack事件监听函数compiler.hooks.[hook].[tapPromise|tapAsync|tap]
+    compiler.hooks.emit.tapAsync(MY_PLUGIN_NAME, (compilation, asyncCallback) => {
+      // 5.操作or改变compilation内部数据
+      console.log(compilation)
+      console.log('当前阶段===>编译完成，即将输出到output目录')
+      // 6.如果是异步钩子，结束后需要执行异步回调
+      typeof asyncCallback === 'function' && asyncCallback()
+    })
+  }
 }
 // 7.模块导出
 module.exports = MyBasicPlugin
@@ -235,10 +235,10 @@ commons-chunk-plugin
 
 // 自动刷新&HMR
 /*
-1. 自动刷新(devServer:{inline:true（默认）})：--watch 
+1. 自动刷新(devServer:{inline:true（默认）})：--watch
 1.1 源码分析：./lib/webpack.js --> if(watch){compiler.watch()}else{compiler.run()}
 1.2 监听文件修改，对相关模块重新打包并保存在内存中（默认是关闭watch监听）
-1.3 webpack-dev-server 
+1.3 webpack-dev-server
 1.3.1 webpack 自带watch监听，支持sourceMap
 1.3.2 关键点
 1.3.2.1 自动开启watch监听模式
@@ -324,7 +324,7 @@ webpack4.0对代码模块的关系图进行了一些巨大的优化
         enforce: true // 强制为这个缓存组创建 chunks
       },
       default: {   //所有代码分割快都符合默认值，此时判断priority优先级
-        minChunks: 2,  
+        minChunks: 2,
         priority: -20,
         reuseExistingChunk: true   // 允许在模块完全匹配时重用现有的块，而不是创建新的块。
       }
@@ -562,7 +562,7 @@ Scope Hosting
 (场景、效果、原理)
 exclude/include（通过 exclude、include 配置来确保转译尽可能少的文件）
 speed-measure-webpack-plugin（测量各个插件和loader所花费的时间）
-webpack-bundle-analyzer 
+webpack-bundle-analyzer
 】
 
 cache-loader和hard-source-webpack-plugin的区别是什么？
@@ -676,14 +676,14 @@ hash、chunkhash、contenthash三者的区别？
 
 如何在vue项目中实现按需加载？
 【
-Vue UI组件库的按需加载 
-为了快速开发前端项目，经常会引入现成的UI组件库如ElementUI、iView等，但是他们的体积和他们所提供的功能一样，是很庞大的。 
+Vue UI组件库的按需加载
+为了快速开发前端项目，经常会引入现成的UI组件库如ElementUI、iView等，但是他们的体积和他们所提供的功能一样，是很庞大的。
 而通常情况下，我们仅仅需要少量的几个组件就足够了，但是我们却将庞大的组件库打包到我们的源码中，造成了不必要的开销。
 不过很多组件库已经提供了现成的解决方案，如Element出品的babel-plugin-component和AntDesign出品的babel-plugin-import 安装以上插件后，
 在.babelrc配置中或babel-loader的参数中进行设置，即可实现组件按需加载了。
 单页应用的按需加载
 现在很多前端项目都是通过单页应用的方式开发的，但是随着业务的不断扩展，会面临一个严峻的问题——首次加载的代码量会越来越多，影响用户的体验。
-通过import(*)语句来控制加载时机，webpack内置了对于import(*)的解析，会将import(*)中引入的模块作为一个新的入口在生成一个chunk。 
+通过import(*)语句来控制加载时机，webpack内置了对于import(*)的解析，会将import(*)中引入的模块作为一个新的入口在生成一个chunk。
 当代码执行到import(*)语句时，会去加载Chunk对应生成的文件。import()会返回一个Promise对象，所以为了让浏览器支持，需要事先注入Promise polyfill
 】
 

@@ -17,6 +17,20 @@ keep-alive
 面经
 ********/
 
+// DNS
+/*
+预解析的实现：
+  1、用meta信息来告知浏览器, 当前页面要做DNS预解析:<meta http-equiv="x-dns-prefetch-control" content="on" />
+  2、在页面header中使用link标签来强制对DNS预解析: <link rel="dns-prefetch" href="http://bdimg.share.baidu.com" />
+*/
+
+// CDN
+/*
+CDN的加速资源是跟域名绑定的
+通过域名访问资源，首先是通过DNS分查找离用户最近的CDN节点（边缘服务器）的IP
+通过IP访问实际资源时，如果CDN上并没有缓存资源，则会到源站请求资源，并缓存到CDN节点上，这样，用户下一次访问时，该CDN节点就会有对应资源的缓存了。
+*/
+
 // 1.0/1.1/2.0
 /*
 http/1.0

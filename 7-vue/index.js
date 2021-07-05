@@ -10,10 +10,11 @@ render函数
 v-modal
 v-if/v-for
 slot
-组件通信
+组件通信（props/$emit, eventBus, store, $attrs/$listeners, provide/inject, $children/$parent/$refs）
 nuxt
 指令（v-directive）
 vue-loader
+nextTick
 面经
 ********/
 
@@ -45,8 +46,31 @@ CSS提取
       new StyleLintPlugin({files: ['**\/*.{vue,htm,html,css,sss,less,scss,sass}']})
 */
 
+// nextTick
+/*
+触发时机：在同一事件循环中的数据变化后，DOM完成更新，立即执行nextTick(callback)内的回调。
+原理：在内部对异步队列，宏任务尝试依次使用原生的 setImmediate，MessageChannel，setTimeout(fn, 0)；如果是微任务使用Promise.then，不支持直接使用宏任务。
+*/
+
 // 面经
 /*
 vue双向绑定原理？
 如何在vue项目中实现按需加载？
+【
+UI组件库
+使用babel-plugin-components/babel-plugin-import按需加载
+vue单页面
+函数返回import组件
+】
+vue中父子组件的生命周期执行顺序？
+【
+加载渲染过程
+父beforeCreate->父created->父beforeMount->子beforeCreate->子created->子beforeMount->子mounted->父mounted
+子组件更新过程
+父beforeUpdate->子beforeUpdate->子updated->父updated
+父组件更新过程
+父beforeUpdate->父updated
+销毁过程
+父beforeDestroy->子beforeDestroy->子destroyed->父destroyed
+】
 */
