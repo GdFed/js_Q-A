@@ -1,12 +1,13 @@
 // 1-dom&bom
 /********
+事件模型
 事件流（捕获/冒泡/事件代理/事件委托）
 html5新标签及新特性
 兼容性
 ajax(axios)
 跨域（jsonp，postmessage，ajax）
-w3c新api
 svg/canvas/webGL
+PWA
 ********/
 
 // 2-css
@@ -64,6 +65,7 @@ event loop
 egg（koa，express）
 持久化（redis）
 puppeteer
+错误处理最佳实践
 面经
 ********/
 
@@ -90,9 +92,11 @@ render函数
 v-modal
 v-if/v-for
 slot
-组件通信
+组件通信（props/$emit, eventBus, store, $attrs/$listeners, provide/inject, $children/$parent/$refs）
 nuxt
 指令（v-directive）
+vue-loader
+nextTick
 面经
 ********/
 
@@ -105,10 +109,11 @@ $router/$route
 按需加载路由
 ********/
 
-// 9-vuex&mobx&flux&redux
+// 9-flux&vuex&mobx&redux
 /********
 vuex源码分析
-状态管理机制（mobx，flux，redux）
+flux
+状态管理机制（mobx, redux, vuex）
 ********/
 
 // 10-react
@@ -131,7 +136,7 @@ tsc/ts-node
 // 12-webpack
 /********
 简述
-编译过程
+编译过程（参数初始化，生成编译器，确定入口，生成模块依赖树，根据chunk进行打包，生成bundle文件到指定目录）
 编译生命周期钩子
 hooks设计原理：tapable
 loader
@@ -158,6 +163,7 @@ git（hooks）
 代码检查（prettier，eslint，postcss，posthtml）
 babel
 shell
+monorepo
 面经
 ********/
 
@@ -167,7 +173,8 @@ nginx（负载均衡（ip_hash，lest_conn,backup,down,一致性hash），反向
 状态码（200,204,301,302，304,401,403,404,500）
 1.0/1.1/2.0
 http/https（http+ssl，对称加密，非对称加密，数字证书）
-tcp/udp
+TCP
+UDP
 http3.0(uqic)
 DNS（域名解析系统）
 CDN（内容分发网络）
@@ -176,6 +183,7 @@ CORS
 安全（中间人攻击：伪造证书）
 5层网络结构（应用层（应用层表示层会话层）（http），传输层（tcp，udp），网络层（ip），数据链路层，物理层）
 websocket
+keep-alive
 面经
 ********/
 
