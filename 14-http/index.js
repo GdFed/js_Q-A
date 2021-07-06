@@ -282,6 +282,36 @@ TLS传输层安全协议
 
 */
 
+// 缓存（强缓存：expries，cache-control；协商缓存：last-modified，etag）
+/*
+强缓存：
+- expries 1.0
+- cache-control: max-age=XXX 1.1
+- max-age优先expries
+协商缓存:
+- cache-control: no-cache
+- Last-Modified/If-Modifed-Since（s级以下）
+- Etag/If-None-Match
+- Etag优先Last-Modifed
+http cache：
+- 200 from memory cache
+  不访问服务器，直接读缓存，从内存中读取缓存
+  当kill进程后，也就是浏览器关闭以后，数据将不存在
+- 200 from disk cache
+  不访问服务器，直接读缓存，从磁盘中读取缓存
+  当kill进程时，数据还是存在
+- 304 Not Modified
+  访问服务器，发现数据没有更新，服务器返回此状态码（不返回资源）。
+  然后从缓存中读取数据。
+用户行为对浏览器缓存的影响：
+- 打开网页：
+  地址栏输入地址： 查找 disk cache 中是否有匹配。如有则使用；如没有则发送网络请求。
+- 普通刷新 (F5)：
+  因为 TAB 并没有关闭，因此 memory cache 是可用的，会被优先使用(如果匹配的话)。其次才是 disk cache。
+- 强制刷新 (Ctrl + F5)：
+  浏览器不使用缓存，因此发送的请求头部均带有 Cache-control: no-cache(为了兼容，还带了 Pragma: no-cache),服务器直接返回 200 和最新内容。
+*/
+
 // 面经
 /*
 tcp和udp的区别和使用场景

@@ -60,8 +60,10 @@ Array/Object新增方法
 
 // 5-node
 /********
+ 三大特性
 event loop
-模块
+模块化
+优先处理错误
 egg（koa，express）
 持久化（redis）
 puppeteer
