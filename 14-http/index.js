@@ -14,6 +14,7 @@ CORS
 5层网络结构（应用层（应用层表示层会话层）（http），传输层（tcp，udp），网络层（ip），数据链路层，物理层）
 websocket
 keep-alive
+HTTP 传输大文件的几种方案
 面经
 ********/
 
@@ -279,7 +280,14 @@ TLS传输层安全协议
   提供0-RTT和1-RTT连接建立（0-RTT基于建立过连接并缓存了该连接）
 通过端点建立连接（0-RTT）
   第一次通过IP+端口建立连接之后，会创建连接id（网络发生变化后也可以重新连接）
+*/
 
+// CDN（内容分发网络）
+/*
+「内容分发网络」简称「CDN」，指一组分布在各地存储数据副本并可根据就近原则满足数据请求的服务器。
+其核心特征是缓存和回源，缓存是把资源复制到CDN服务器里，回源是资源过期/不存在就向上层服务器请求并复制到CDN服务器里
+使用CDN可降低网络拥塞，提高用户访问响应速度和命中率。
+构建在现有网络基础上的智能虚拟网络，依靠部署在各地服务器，通过中心平台的调度、负载均衡、内容分发等功能模块，使用户就近获取所需资源，这就是CDN的终极使命。
 */
 
 // 缓存（强缓存：expries，cache-control；协商缓存：last-modified，etag）
@@ -315,10 +323,53 @@ http cache：
 // 面经
 /*
 tcp和udp的区别和使用场景
+【
+区别：
+tcp：传输控制协议，安全可靠（基于阻塞控制，数据超时重传等机制），较UDP缓慢（3次握手），一对一，网络中间设备传输性能好
+udp：用户数据报协议，不安全可靠，快速，多对多，网络中间设备传输性能不及TCP
+使用场景：
+tcp：基于tcp/ip的http2.0，
+udp: DNS服务器解析（53端口），http3.0（基于UDP增加可靠性的层，基于TLS的安全协议）
+】
 quic基于udp怎么保证可靠性
 【
 UDP不提供可靠传输，quic基于UDP之上增加一个带来可靠性的层，提供了数据包重传，拥塞控制，调整传输节奏以及其他一些TCP存在的特性
 】
 讲一下同源策略和跨域方案？cors的几个头部是什么？
 grpc相比http的优势？
+【
+gRPC和restful API都提供了一套通信机制，用于server/client模型通信，而且它们都使用http作为底层的传输协议（严格地说, gRPC使用的http2.0，而restful api则不一定）。
+优势：
+gRPC可以通过protobuf来定义接口，可以有更加严格的接口约束条件，支持多种语言。
+protobuf可以将数据序列化为二进制编码，这会大幅减少需要传输的数据量，从而大幅提高传输速度。
+gRPC可以支持streaming流式通信（http2.0），提高传输速度。
+建议方案：
+微服务：gRPC 设计用于低延迟和高吞吐量通信。 gRPC 对于效率至关重要的轻量级微服务非常有用。
+点对点实时通信：gRPC 对双向流式传输提供出色的支持。 gRPC 服务可以实时推送消息而无需轮询。
+多语言环境：gRPC 工具支持所有常用的开发语言，因此，gRPC 是多语言环境的理想选择。
+网络受限环境：gRPC 消息使用 Protobuf（一种轻量级消息格式）进行序列化。 gRPC 消息始终小于等效的 JSON 消息。
+进程间通信 (IPC) ：IPC 传输（如 Unix 域套接字和命名管道）可与 gRPC 一起用于同一台计算机上的应用间通信。
+】
+HTTP 传输大文件的几种方案
+【
+1.数据压缩
+  - 请求头：携带 accept 和 accept-* 请求头信息，用于告诉服务器当前浏览器所支持的文件类型、支持的压缩格式列表和支持的语言
+  - gzip 的压缩率通常能够超过 60%，而 br 算法是专门为 HTML 设计的，压缩效率和性能比 gzip 还要好，能够再提高 20% 的压缩密度。
+    accept: *\/*
+    accept-encoding: gzip, deflate, br
+    accept-language: zh-CN,zh;q=0.9
+  - 响应头
+    cache-control: max-age=2592000
+    content-encoding: gzip
+    content-type: application/x-javascript
+2.分块传输编码
+  - 响应头： chunked表示数据以一系列分块的形式进行发送。
+    Transfer-Encoding: chunked
+    Transfer-Encoding: gzip, chunked
+  - 需要注意的是 Transfer-Encoding 和 Content-Length 这两个字段是互斥的，也就是说响应报文中这两个字段不能同时出现。
+3.范围请求
+  - 响应头：Accept-Ranges 首部（并且它的值不为 “none”），那么表示该服务器支持范围请求
+    Range: <unit>=<range-start>-<range-end>, <range-start>-<range-end>
+    Range: bytes=0-50, 100-150
+】
 */

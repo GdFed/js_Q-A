@@ -1,12 +1,12 @@
 /********
-面向对象
 作用域
-变量申明
+变量声明
 变量提升
-原型/原型链
 数据类型
-new
+原型/原型链
+面向对象
 构造函数（persom.__proto__===Person.prototype(__proto__不是w2c标准，但是浏览器基本上都提供)）
+new
 继承（原型继承，构造函数继承，组合继承）
 this
 call，apply，bind
@@ -100,10 +100,6 @@ function hoisting () {
 // console.log(a) // a is not defined
 // hoisting()
 
-// 原型/原型链
-/*
-*/
-
 // 数据类型
 /*
 基础类型undefined，null，boolean，string，number，symbol（用来表示唯一值）
@@ -177,6 +173,19 @@ function toStringCall (val) {
   return Object.prototype.toString.call(val)
 }
 console.log(toStringCall(1))
+
+// 原型/原型链
+/*
+prototype
+- js中，每个函数都有一个prototype属性，指向该函数的原型对象prototype
+constructor
+- 每个原型都有一个constructor属性，指向该关联的构造函数
+__proto__
+- 每个对象(除null外)都会有的属性，指向该对象的原型
+原型链
+- 在JavaScript 中，每个对象都有一个指向它的原型（prototype）对象的内部链接。这个原型对象又有自己的原型，直到某个对象的原型为 null 为止，这样形成的一个原型指向的链条
+- 意义：为了实现面对对象编程的一种设计。基于原型链，可以让JavaScript对象拥有封装、继承和多态等众多面对对象特性
+*/
 
 // 面向对象
 /*

@@ -5,7 +5,7 @@
 html5新标签及新特性
 兼容性
 ajax(axios)
-跨域（jsonp，postmessage，ajax）
+跨域（jsonp，postmessage，cors，代理服务，配合iframe实现）
 svg/canvas/webGL
 PWA
 ********/
@@ -28,14 +28,14 @@ less/sass
 
 // 3-js&高级
 /********
-面向对象
 作用域
-变量申明
+变量声明
 变量提升
-原型/原型链
 数据类型
-new
+原型/原型链
+面向对象
 构造函数（persom.__proto__===Person.prototype(__proto__不是w2c标准，但是浏览器基本上都提供)）
+new
 继承（原型继承，构造函数继承，组合继承）
 this
 call，apply，bind
@@ -186,6 +186,7 @@ CORS
 5层网络结构（应用层（应用层表示层会话层）（http），传输层（tcp，udp），网络层（ip），数据链路层，物理层）
 websocket
 keep-alive
+HTTP 传输大文件的几种方案
 面经
 ********/
 

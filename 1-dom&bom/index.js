@@ -4,7 +4,7 @@
 html5新标签及新特性
 兼容性
 ajax(axios)
-跨域（jsonp，postmessage，ajax）
+跨域（jsonp，postmessage，cors，代理服务，配合iframe实现）
 svg/canvas/webGL
 PWA
 ********/
@@ -42,7 +42,6 @@ IE事件模型
   事件冒泡阶段
 事件代理：也叫事件委托
 事件代理的原理是DOM元素的事件冒泡
-  
 */
 
 // html5新标签及新特性
@@ -112,9 +111,101 @@ getBoundingClientRect
 
 */
 
-// ajax
+// 兼容性
+/**/
+
+// ajax(axios)
 const ajax = require('./ajax')
 ajax()
+
+// 跨域（jsonp，postmessage，cors，代理服务，配合iframe实现）
+/*
+1. jsonp
+- 原理：利用script标签src属性跨域的特性，将动态插入script标签来加载带数据源的脚步执行链接，实现异步跨域操作
+- 缺点：只支持GET请求
+2. postmessage： 用于安全地实现跨源通信
+- 原理：使用otherWindow.postMessage(message, targetOrigin, [transfer]);和window.addEventListener("message",fn)实现跨域数据传输
+- 参数说明：
+  otherWindow	其他窗口的一个引用，比如 iframe 的 contentWindow 属性、执行 window.open 返回的窗口对象、或者是命名过或数值索引的 window.frames。
+  message	将要发送到其他 window的数据。
+  targetOrigin	指定哪些窗口能接收到消息事件，其值可以是 *（表示无限制）或者一个 URI。
+  transfer	可选，是一串和 message 同时传递的 Transferable 对象。这些对象的所有权将被转移给消息的接收方，而发送一方将不再保有所有权。
+- 缺点：安全性（无法检查origin和source属性会导致跨站点脚本攻击）
+3. cors(跨域资源共享)
+- 原理：通过异步请求API，请求设置了支持跨域请求的服务器
+- 常见请求头：
+  Access-Control-Allow-Origin
+  Access-Control-Request-Method
+  Access-Control-Request-Headers
+  Access-Control-Allow-Credentials
+- 预检请求：（针对跨域请求，确认允许跨域的预检）
+- 缺点：需要服务端配合
+4. 代理服务
+- 原理：将资源接收方和请求方代理到一致的同源
+- 常见实践：node中间件代理，nginx反向代理
+5. 配合iframe实现
+5.1 document.domain
+  - 前提：仅限主域相同，这两个域名必须属于同一个基础域名而且所用的协议，端口都要一致，否则无法利用document.domain进行跨域.
+  - 原理：利用主域相同子域不同通过设置document.domain为基础主域
+  - 实现：
+    父窗口：(http://www.domain.com/a.html)
+    <iframe id="iframe" src="http://child.domain.com/b.html"></iframe>
+    <script>
+        document.domain = 'domain.com';
+        var user = 'admin';
+    </script>
+    子窗口：(http://child.domain.com/b.html)
+    <script>
+      document.domain = 'domain.com';
+      // 获取父窗口中变量
+      alert('get js data from parent ---> ' + window.parent.user);
+    </script>
+5.2 window.name
+  - 特点：name值在不同的页面（甚至不同域名）加载后依旧存在，并且可以支持非常长的 name 值（2MB）
+  - 原理：通过iframe的src属性由外域转向本地域，跨域数据即由iframe的window.name从外域传递到本地域。
+  - 实现：
+    var proxy = function(url, callback) {
+      var state = 0;
+      var iframe = document.createElement('iframe');
+
+      // 加载跨域页面
+      iframe.src = url;
+
+      // onload事件会触发2次，第1次加载跨域页，并留存数据于window.name
+      iframe.onload = function() {
+          if (state === 1) {
+              // 第2次onload(同域proxy页)成功后，读取同域window.name中数据
+              callback(iframe.contentWindow.name);
+              destoryFrame();
+
+          } else if (state === 0) {
+              // 第1次onload(跨域页)成功后，切换到同域代理页面
+              iframe.contentWindow.location = 'http://www.domain1.com/proxy.html';
+              state = 1;
+          }
+      };
+
+      document.body.appendChild(iframe);
+
+      // 获取数据以后销毁这个iframe，释放内存；这也保证了安全（不被其他域frame js访问）
+      function destoryFrame() {
+          iframe.contentWindow.document.write('');
+          iframe.contentWindow.close();
+          document.body.removeChild(iframe);
+      }
+  };
+  // 请求跨域b页面数据
+  proxy('http://www.domain2.com/b.html', function(data){
+      alert(data);
+  });
+5.3 location.hash
+  - 原理：a与b跨域相互通信，通过中间页c来实现。 三个页面，不同域之间利用iframe的location.hash传值，相同域之间直接js访问来通信
+  - 实现：A域：a.html -> B域：b.html -> A域：c.html，a与b不同域只能通过hash值单向通信，b与c也不同域也只能单向通信，但c与a同域，所以c可通过parent.parent访问a页面所有对象。
+
+*/
+
+// svg/canvas/webGL
+/**/
 
 // PWA
 /*
